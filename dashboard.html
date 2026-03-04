@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard – AI Study Buddy</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & BASE ── */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:         #0B0F1A;
+  --bg2:        #111827;
+  --bg3:        #1C2333;
+  --card:       #141924;
+  --card2:      #1A2236;
+  --border:     rgba(255,255,255,.07);
+  --border2:    rgba(255,255,255,.12);
+  --blue:       #4F8EF7;
+  --blue-d:     #2563EB;
+  --blue-g:     linear-gradient(135deg,#4F8EF7,#7C3AED);
+  --teal:       #14B8A6;
+  --teal-g:     linear-gradient(135deg,#14B8A6,#06B6D4);
+  --orange:     #FB923C;
+  --orange-g:   linear-gradient(135deg,#FB923C,#F59E0B);
+  --green:      #34D399;
+  --green-g:    linear-gradient(135deg,#34D399,#10B981);
+  --red:        #F87171;
+  --purple:     #A78BFA;
+  --purple-g:   linear-gradient(135deg,#A78BFA,#7C3AED);
+  --pink:       #F472B6;
+  --yellow:     #FCD34D;
+  --t1:         #F1F5F9;
+  --t2:         #94A3B8;
+  --t3:         #475569;
+  --r:          14px;
+  --rl:         20px;
+  --nav-h:      64px;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Sora',sans-serif;
+  background:var(--bg);color:var(--t1);
+  min-height:100vh;overflow-x:hidden;
+  line-height:1.5;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--t3);border-radius:2px}
+
+/* ── NOISE OVERLAY ── */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity:.4;
+}
+
+/* ── NAV ── */
+.nav{
+  position:fixed;top:0;left:0;right:0;height:var(--nav-h);z-index:99;
+  background:rgba(11,15,26,.85);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 32px;gap:20px;
+}
+.nav-brand{
+  display:flex;align-items:center;gap:10px;
+  font-weight:800;font-size:.95rem;color:var(--t1);letter-spacing:-.3px;
+}
+.nav-brand-logo{
+  width:34px;height:34px;border-radius:10px;
+  background:var(--blue-g);
+  display:flex;align-items:center;justify-content:center;font-size:1rem;
+  box-shadow:0 0 20px rgba(79,142,247,.3);
+}
+.nav-sep{width:1px;height:22px;background:var(--border2);margin:0 4px}
+.nav-page{font-size:.78rem;color:var(--t2);font-weight:500}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.nav-time{
+  font-family:'JetBrains Mono',monospace;font-size:.78rem;
+  color:var(--t2);background:var(--bg3);
+  padding:5px 12px;border-radius:100px;border:1px solid var(--border);
+}
+.nav-avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,#4F8EF7,#A78BFA);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.82rem;font-weight:700;color:white;
+  border:2px solid rgba(79,142,247,.4);
+  cursor:pointer;
+}
+
+/* ── LAYOUT ── */
+.page{
+  max-width:1280px;margin:0 auto;
+  padding:calc(var(--nav-h) + 28px) 24px 48px;
+  position:relative;z-index:1;
+}
+
+/* ── GREETING ROW ── */
+.greeting-row{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:28px;flex-wrap:wrap;gap:16px;
+}
+.greeting-left{}
+.greeting-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.7rem;font-weight:600;color:var(--teal);
+  background:rgba(20,184,166,.1);border:1px solid rgba(20,184,166,.2);
+  padding:3px 10px;border-radius:100px;margin-bottom:10px;letter-spacing:.5px;
+  text-transform:uppercase;
+}
+.greeting-tag-dot{width:5px;height:5px;background:var(--teal);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.6)}}
+.greeting-name{
+  font-size:clamp(1.6rem,3vw,2.2rem);font-weight:800;letter-spacing:-.5px;
+  color:var(--t1);margin-bottom:5px;
+}
+.greeting-name span{
+  background:var(--blue-g);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.greeting-sub{font-size:.9rem;color:var(--t2);font-weight:400}
+
+.status-widget{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--rl);padding:14px 20px;
+  display:flex;align-items:center;gap:14px;
+  min-width:220px;
+}
+.sw-ring{
+  width:48px;height:48px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:1.3rem;
+  position:relative;
+}
+.sw-ring::before{
+  content:'';position:absolute;inset:-3px;border-radius:50%;
+  background:conic-gradient(var(--green) 72%,rgba(255,255,255,.08) 0);
+  z-index:0;
+}
+.sw-ring::after{
+  content:'';position:absolute;inset:3px;border-radius:50%;background:var(--card);z-index:1;
+}
+.sw-ring-ico{position:relative;z-index:2}
+.sw-body{}
+.sw-label{font-size:.68rem;color:var(--t2);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.sw-val{font-size:.92rem;font-weight:700;color:var(--t1)}
+.sw-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:.64rem;font-weight:700;padding:2px 7px;border-radius:100px;
+  margin-top:3px;
+}
+.badge-ok{background:rgba(52,211,153,.12);color:var(--green)}
+.badge-warn{background:rgba(251,146,60,.12);color:var(--orange)}
+.badge-rest{background:rgba(167,139,250,.12);color:var(--purple)}
+
+/* ── GRID ── */
+.grid-main{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr 1fr;
+  gap:16px;margin-bottom:16px;
+}
+.grid-mid{
+  display:grid;
+  grid-template-columns:2fr 1.4fr;
+  gap:16px;margin-bottom:16px;
+}
+.grid-bot{
+  display:grid;
+  grid-template-columns:1.4fr 2fr;
+  gap:16px;margin-bottom:16px;
+}
+.grid-last{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:16px;
+}
+
+/* ── STAT CARDS ── */
+.stat-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--rl);padding:20px;
+  position:relative;overflow:hidden;
+  transition:border-color .2s,transform .2s;cursor:default;
+}
+.stat-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.stat-card::after{
+  content:'';position:absolute;top:-40px;right:-40px;
+  width:110px;height:110px;border-radius:50%;
+  opacity:.07;
+}
+.sc-blue::after{background:var(--blue)}
+.sc-teal::after{background:var(--teal)}
+.sc-orange::after{background:var(--orange)}
+.sc-purple::after{background:var(--purple)}
+
+.sc-ico-wrap{
+  width:40px;height:40px;border-radius:11px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;margin-bottom:14px;
+}
+.ico-blue  {background:rgba(79,142,247,.12)}
+.ico-teal  {background:rgba(20,184,166,.12)}
+.ico-orange{background:rgba(251,146,60,.12)}
+.ico-purple{background:rgba(167,139,250,.12)}
+
+.sc-val{
+  font-family:'JetBrains Mono',monospace;
+  font-size:1.8rem;font-weight:700;color:var(--t1);
+  letter-spacing:-1px;margin-bottom:4px;
+}
+.sc-val span{font-size:1rem;font-weight:400;color:var(--t2);letter-spacing:0}
+.sc-label{font-size:.76rem;color:var(--t2);font-weight:500;margin-bottom:8px}
+.sc-trend{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:.67rem;font-weight:700;padding:2px 8px;border-radius:100px;
+}
+.tr-up  {background:rgba(52,211,153,.1);color:var(--green)}
+.tr-down{background:rgba(248,113,113,.1);color:var(--red)}
+.tr-same{background:rgba(148,163,184,.1);color:var(--t2)}
+
+/* ── CARD BASE ── */
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--rl);overflow:hidden;
+  transition:border-color .2s;
+}
+.card:hover{border-color:var(--border2)}
+.card-head{
+  padding:18px 20px 0;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.card-title{font-size:.86rem;font-weight:700;color:var(--t1)}
+.card-sub  {font-size:.7rem;color:var(--t2);margin-top:2px}
+.card-badge{
+  font-size:.64rem;font-weight:700;padding:3px 9px;border-radius:100px;
+  background:rgba(79,142,247,.1);color:var(--blue);border:1px solid rgba(79,142,247,.15);
+}
+.card-badge.green{background:rgba(52,211,153,.1);color:var(--green);border-color:rgba(52,211,153,.15)}
+.card-badge.orange{background:rgba(251,146,60,.1);color:var(--orange);border-color:rgba(251,146,60,.15)}
+.card-badge.purple{background:rgba(167,139,250,.1);color:var(--purple);border-color:rgba(167,139,250,.15)}
+.card-body{padding:16px 20px 20px}
+
+/* ── PROGRESS SECTION ── */
+.progress-list{display:flex;flex-direction:column;gap:13px}
+.prog-row{display:grid;grid-template-columns:90px 1fr 38px;align-items:center;gap:10px}
+.prog-name{font-size:.78rem;font-weight:600;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prog-track{
+  height:6px;background:rgba(255,255,255,.06);
+  border-radius:100px;overflow:hidden;position:relative;
+}
+.prog-fill{
+  height:100%;border-radius:100px;
+  transition:width 1.2s cubic-bezier(.16,1,.3,1);
+}
+.prog-pct{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.72rem;font-weight:700;color:var(--t2);text-align:right;
+}
+.prog-current{
+  border-radius:10px;padding:10px 14px;
+  background:rgba(79,142,247,.07);border:1px solid rgba(79,142,247,.12);
+  margin-bottom:14px;display:flex;align-items:center;gap:10px;
+}
+.prog-current-dot{width:8px;height:8px;border-radius:50%;background:var(--blue);animation:pulse 2s infinite;flex-shrink:0}
+.prog-current-text{font-size:.78rem;color:var(--t1);font-weight:600}
+.prog-current-text span{color:var(--blue)}
+
+/* ── EMOTION / WELLBEING ── */
+.emotion-banner{
+  border-radius:12px;padding:14px 16px;margin-bottom:14px;
+  display:flex;align-items:flex-start;gap:12px;
+  position:relative;overflow:hidden;
+}
+.em-warn {background:linear-gradient(135deg,rgba(251,146,60,.1),rgba(245,158,11,.06));border:1px solid rgba(251,146,60,.18)}
+.em-ok   {background:linear-gradient(135deg,rgba(52,211,153,.1),rgba(16,185,129,.06));border:1px solid rgba(52,211,153,.18)}
+.em-rest {background:linear-gradient(135deg,rgba(167,139,250,.1),rgba(124,58,237,.06));border:1px solid rgba(167,139,250,.18)}
+.em-ico{font-size:1.4rem;flex-shrink:0;margin-top:1px}
+.em-body{}
+.em-title{font-size:.82rem;font-weight:700;color:var(--t1);margin-bottom:3px}
+.em-desc{font-size:.74rem;color:var(--t2);line-height:1.55}
+.em-action{
+  display:inline-flex;align-items:center;gap:5px;
+  margin-top:7px;font-size:.72rem;font-weight:700;
+  cursor:pointer;transition:opacity .2s;
+}
+.em-action:hover{opacity:.7}
+
+.wellness-indicators{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;
+}
+.wi{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:10px;padding:11px 10px;text-align:center;
+}
+.wi-ico{font-size:1.1rem;margin-bottom:5px}
+.wi-name{font-size:.63rem;color:var(--t2);font-weight:600;margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+.wi-bar{height:4px;background:rgba(255,255,255,.06);border-radius:100px;overflow:hidden;margin-bottom:4px}
+.wi-fill{height:100%;border-radius:100px}
+.wi-val{font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:700}
+
+/* ── PREDICTION CARD ── */
+.pred-subject-row{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:12px;
+}
+.pred-subj{
+  display:flex;align-items:center;gap:8px;
+}
+.pred-subj-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.pred-subj-name{font-size:.82rem;font-weight:600;color:var(--t1)}
+.pred-scores{
+  display:flex;align-items:center;gap:6px;
+}
+.pred-now{
+  font-family:'JetBrains Mono',monospace;
+  font-size:1rem;font-weight:700;
+}
+.pred-arrow{color:var(--t3);font-size:.8rem}
+.pred-target{
+  font-family:'JetBrains Mono',monospace;
+  font-size:1rem;font-weight:700;
+  padding:1px 8px;border-radius:6px;
+}
+.pred-hint{
+  background:rgba(79,142,247,.06);border:1px solid rgba(79,142,247,.1);
+  border-radius:10px;padding:10px 13px;margin-top:12px;
+  font-size:.74rem;color:var(--t2);line-height:1.55;
+}
+.pred-hint strong{color:var(--blue)}
+
+/* ── COMPARISON CHART ── */
+.compare-wrap{display:flex;flex-direction:column;gap:12px}
+.cmp-row{display:flex;align-items:center;gap:10px}
+.cmp-name{font-size:.75rem;font-weight:600;color:var(--t1);width:66px;flex-shrink:0}
+.cmp-bars{flex:1;display:flex;flex-direction:column;gap:4px}
+.cmp-bar-row{display:flex;align-items:center;gap:6px}
+.cmp-bar-bg{flex:1;height:7px;background:rgba(255,255,255,.05);border-radius:100px;overflow:hidden}
+.cmp-bar-fill{height:100%;border-radius:100px}
+.cmp-bar-lbl{font-size:.62rem;font-weight:600;width:28px;text-align:right;font-family:'JetBrains Mono',monospace}
+.cmp-legend{display:flex;gap:14px;margin-bottom:14px}
+.cmp-leg-item{display:flex;align-items:center;gap:5px;font-size:.68rem;color:var(--t2)}
+.cmp-leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* ── STRATEGY CARDS ── */
+.strategy-list{display:flex;flex-direction:column;gap:10px}
+.strat{
+  border-radius:11px;padding:13px 14px;
+  border:1px solid var(--border);
+  display:flex;gap:12px;align-items:flex-start;
+  transition:border-color .2s,background .2s;cursor:default;
+}
+.strat:hover{border-color:var(--border2);background:var(--card2)}
+.strat-ico{
+  width:36px;height:36px;border-radius:9px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:1rem;
+}
+.strat-body{}
+.strat-title{font-size:.82rem;font-weight:700;color:var(--t1);margin-bottom:3px}
+.strat-desc{font-size:.72rem;color:var(--t2);line-height:1.5}
+.strat-tag{
+  display:inline-flex;align-items:center;gap:4px;
+  margin-top:6px;font-size:.64rem;font-weight:700;
+  padding:2px 8px;border-radius:100px;
+}
+.tag-high{background:rgba(248,113,113,.1);color:var(--red)}
+.tag-med {background:rgba(251,146,60,.1);color:var(--orange)}
+.tag-low {background:rgba(52,211,153,.1);color:var(--green)}
+
+/* ── MINI CHART (bar sparkline) ── */
+.sparkline{
+  display:flex;align-items:flex-end;gap:3px;
+  height:36px;
+}
+.spark-bar{
+  flex:1;border-radius:3px 3px 0 0;min-width:0;
+  transition:height .6s ease;
+}
+
+/* ── CONTINUE BUTTON ── */
+.continue-section{
+  background:linear-gradient(135deg,rgba(79,142,247,.12),rgba(167,139,250,.08));
+  border:1px solid rgba(79,142,247,.2);
+  border-radius:var(--rl);padding:22px 24px;
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  flex-wrap:wrap;
+}
+.cs-left{}
+.cs-tag{
+  font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;
+  color:var(--blue);margin-bottom:7px;display:flex;align-items:center;gap:6px;
+}
+.cs-title{font-size:1.1rem;font-weight:800;color:var(--t1);margin-bottom:5px;letter-spacing:-.3px}
+.cs-sub{font-size:.82rem;color:var(--t2)}
+.cs-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn-continue{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--blue-g);color:white;border:none;
+  padding:12px 24px;border-radius:100px;
+  font-family:'Sora',sans-serif;font-weight:700;font-size:.88rem;
+  cursor:pointer;transition:all .25s;
+  box-shadow:0 4px 20px rgba(79,142,247,.25);
+}
+.btn-continue:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(79,142,247,.35)}
+.btn-continue svg{transition:transform .2s}
+.btn-continue:hover svg{transform:translateX(3px)}
+.btn-schedule{
+  display:inline-flex;align-items:center;gap:7px;
+  background:transparent;color:var(--t2);
+  border:1px solid var(--border2);
+  padding:12px 20px;border-radius:100px;
+  font-family:'Sora',sans-serif;font-weight:600;font-size:.84rem;
+  cursor:pointer;transition:all .2s;
+}
+.btn-schedule:hover{color:var(--t1);border-color:rgba(255,255,255,.2);background:var(--card2)}
+
+/* ── ACTIVITY LOG ── */
+.activity-list{display:flex;flex-direction:column;gap:0}
+.act-item{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:10px 0;border-bottom:1px solid var(--border);
+}
+.act-item:last-child{border-bottom:none}
+.act-dot-wrap{display:flex;flex-direction:column;align-items:center;padding-top:4px}
+.act-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.act-line{width:1px;flex:1;background:var(--border);margin-top:4px;min-height:16px}
+.act-item:last-child .act-line{display:none}
+.act-body{flex:1}
+.act-title{font-size:.78rem;font-weight:600;color:var(--t1)}
+.act-sub  {font-size:.7rem;color:var(--t2);margin-top:2px}
+.act-time {
+  font-family:'JetBrains Mono',monospace;
+  font-size:.65rem;color:var(--t3);
+  flex-shrink:0;margin-top:3px;
+}
+
+/* ── RADAR (SVG) ── */
+.radar-wrap{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.radar-legend{flex:1;min-width:140px;display:flex;flex-direction:column;gap:8px}
+.rl-item{display:flex;align-items:center;gap:8px;font-size:.76rem}
+.rl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.rl-name{color:var(--t2);flex:1}
+.rl-val{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:.74rem}
+
+/* ── ANIMATIONS ── */
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn {from{opacity:0}to{opacity:1}}
+@keyframes glow  {0%,100%{box-shadow:0 0 20px rgba(79,142,247,.2)}50%{box-shadow:0 0 32px rgba(79,142,247,.4)}}
+
+.grid-main .stat-card{animation:slideUp .5s ease both}
+.grid-main .stat-card:nth-child(1){animation-delay:.05s}
+.grid-main .stat-card:nth-child(2){animation-delay:.10s}
+.grid-main .stat-card:nth-child(3){animation-delay:.15s}
+.grid-main .stat-card:nth-child(4){animation-delay:.20s}
+.grid-mid  > *{animation:slideUp .5s ease both;animation-delay:.25s}
+.grid-bot  > *{animation:slideUp .5s ease both;animation-delay:.30s}
+.grid-last > *{animation:slideUp .5s ease both}
+.grid-last > *:nth-child(1){animation-delay:.35s}
+.grid-last > *:nth-child(2){animation-delay:.40s}
+.grid-last > *:nth-child(3){animation-delay:.45s}
+.continue-section{animation:slideUp .5s ease .5s both}
+.greeting-row{animation:fadeIn .6s ease both}
+
+/* ── DIVIDER LABEL ── */
+.section-label{
+  font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;
+  color:var(--t3);margin-bottom:12px;display:flex;align-items:center;gap:10px;
+}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1100px){
+  .grid-main{grid-template-columns:1fr 1fr}
+  .grid-mid{grid-template-columns:1fr}
+  .grid-bot{grid-template-columns:1fr}
+  .grid-last{grid-template-columns:1fr 1fr}
+}
+@media(max-width:700px){
+  .page{padding:calc(var(--nav-h)+16px) 14px 40px}
+  .grid-main{grid-template-columns:1fr 1fr}
+  .grid-last{grid-template-columns:1fr}
+  .nav{padding:0 16px}
+  .continue-section{flex-direction:column;align-items:flex-start}
+  .greeting-row{flex-direction:column}
+  .wellness-indicators{grid-template-columns:1fr 1fr 1fr}
+}
+@media(max-width:460px){
+  .grid-main{grid-template-columns:1fr}
+  .wellness-indicators{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-brand">
+    <div class="nav-brand-logo">🤖</div>
+    AI Study Buddy
+  </div>
+  <div class="nav-sep"></div>
+  <span class="nav-page">Dashboard cá nhân</span>
+  <div class="nav-right">
+    <div class="nav-time" id="clock">--:--</div>
+    <div class="nav-avatar">MK</div>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- GREETING -->
+  <div class="greeting-row">
+    <div class="greeting-left">
+      <div class="greeting-tag">
+        <span class="greeting-tag-dot"></span>
+        Thứ Tư, 4 tháng 3 · Tuần học thứ 9
+      </div>
+      <div class="greeting-name">Chào buổi tối, <span>Minh Khoa</span> 👋</div>
+      <div class="greeting-sub">Hôm nay bạn đã học được 2 giờ 40 phút — một ngày khá ổn đấy.</div>
+    </div>
+    <div class="status-widget">
+      <div class="sw-ring">
+        <span class="sw-ring-ico">🧠</span>
+      </div>
+      <div class="sw-body">
+        <div class="sw-label">Trạng thái hôm nay</div>
+        <div class="sw-val">Tập trung tốt</div>
+        <div class="sw-badge badge-ok">✓ Đang trong trạng thái học</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIẾP TỤC HỌC – đặt ngay trên cùng để dễ thấy -->
+  <div class="continue-section" style="margin-bottom:20px">
+    <div class="cs-left">
+      <div class="cs-tag">
+        <span style="width:6px;height:6px;background:var(--blue);border-radius:50%;animation:pulse 2s infinite"></span>
+        Đang dở chừng
+      </div>
+      <div class="cs-title">Toán 12 – Cực trị hàm số</div>
+      <div class="cs-sub">Bạn đang ôn phần <strong style="color:var(--t1)">bài 4/7</strong> · Tiến độ hôm nay: 58% · Còn khoảng <strong style="color:var(--blue)">35 phút</strong> để hoàn thành mục tiêu ngày</div>
+    </div>
+    <div class="cs-right">
+      <button class="btn-schedule">📅 Đặt lịch nhắc</button>
+      <button class="btn-continue" onclick="this.textContent='Đang mở...'">
+        Tiếp tục học
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M8 4l3 3-3 3" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- STAT ROW -->
+  <div class="section-label">Tổng quan hôm nay</div>
+  <div class="grid-main">
+
+    <div class="stat-card sc-blue">
+      <div class="sc-ico-wrap ico-blue">⏱️</div>
+      <div class="sc-val">2<span>giờ</span> 40<span>phút</span></div>
+      <div class="sc-label">Tổng thời gian học</div>
+      <div class="sc-trend tr-up">↑ +20 phút so với hôm qua</div>
+    </div>
+
+    <div class="stat-card sc-teal">
+      <div class="sc-ico-wrap ico-teal">💬</div>
+      <div class="sc-val">34<span> câu</span></div>
+      <div class="sc-label">Câu hỏi đã hỏi AI</div>
+      <div class="sc-trend tr-up">↑ +8 so với TB tuần trước</div>
+    </div>
+
+    <div class="stat-card sc-orange">
+      <div class="sc-ico-wrap ico-orange">📚</div>
+      <div class="sc-val">Toán<span> 12</span></div>
+      <div class="sc-label">Môn đang tập trung</div>
+      <div class="sc-trend tr-same">Cực trị · Hàm số</div>
+    </div>
+
+    <div class="stat-card sc-purple">
+      <div class="sc-ico-wrap ico-purple">🔥</div>
+      <div class="sc-val">12<span> ngày</span></div>
+      <div class="sc-label">Streak học liên tiếp</div>
+      <div class="sc-trend tr-up">↑ Kỷ lục cá nhân của bạn</div>
+    </div>
+
+  </div>
+
+  <!-- PROGRESS + WELLBEING -->
+  <div class="section-label">Tiến độ & Sức khỏe học tập</div>
+  <div class="grid-mid">
+
+    <!-- Progress -->
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">📊 Tiến độ các môn</div>
+          <div class="card-sub">Dựa trên kế hoạch học kỳ 2 · Cập nhật theo thời gian thực</div>
+        </div>
+        <div class="card-badge green">Tuần 9/18</div>
+      </div>
+      <div class="card-body">
+        <div class="prog-current">
+          <div class="prog-current-dot"></div>
+          <div class="prog-current-text">Đang học: <span>Toán 12 – Cực trị hàm số</span> · bài 4/7</div>
+        </div>
+        <div class="progress-list">
+          <div class="prog-row">
+            <div class="prog-name">Toán học</div>
+            <div class="prog-track"><div class="prog-fill" style="width:72%;background:linear-gradient(90deg,#4F8EF7,#7C3AED)"></div></div>
+            <div class="prog-pct" style="color:#4F8EF7">72%</div>
+          </div>
+          <div class="prog-row">
+            <div class="prog-name">Tiếng Anh</div>
+            <div class="prog-track"><div class="prog-fill" style="width:88%;background:linear-gradient(90deg,#34D399,#10B981)"></div></div>
+            <div class="prog-pct" style="color:#34D399">88%</div>
+          </div>
+          <div class="prog-row">
+            <div class="prog-name">Vật lý</div>
+            <div class="prog-track"><div class="prog-fill" style="width:55%;background:linear-gradient(90deg,#14B8A6,#06B6D4)"></div></div>
+            <div class="prog-pct" style="color:#14B8A6">55%</div>
+          </div>
+          <div class="prog-row">
+            <div class="prog-name">Hóa học</div>
+            <div class="prog-track"><div class="prog-fill" style="width:63%;background:linear-gradient(90deg,#FB923C,#F59E0B)"></div></div>
+            <div class="prog-pct" style="color:#FB923C">63%</div>
+          </div>
+          <div class="prog-row">
+            <div class="prog-name">Ngữ văn</div>
+            <div class="prog-track"><div class="prog-fill" style="width:48%;background:linear-gradient(90deg,#F472B6,#EC4899)"></div></div>
+            <div class="prog-pct" style="color:#F472B6">48%</div>
+          </div>
+          <div class="prog-row">
+            <div class="prog-name">Lịch sử</div>
+            <div class="prog-track"><div class="prog-fill" style="width:41%;background:linear-gradient(90deg,#A78BFA,#7C3AED)"></div></div>
+            <div class="prog-pct" style="color:#A78BFA">41%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wellbeing -->
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">💚 Sức khỏe học tập</div>
+          <div class="card-sub">Phân tích dựa trên hành vi học hôm nay</div>
+        </div>
+      </div>
+      <div class="card-body">
+
+        <div class="emotion-banner em-warn">
+          <div class="em-ico">☕</div>
+          <div class="em-body">
+            <div class="em-title">Học liên tục 2 tiếng rồi đó</div>
+            <div class="em-desc">Não cần thời gian để "lưu" thông tin. Nghỉ 10 phút sẽ giúp bạn nhớ lâu hơn, không phải học ít hơn.</div>
+            <div class="em-action" style="color:var(--orange)">
+              ⏸ Hẹn giờ nghỉ 10 phút →
+            </div>
+          </div>
+        </div>
+
+        <div class="emotion-banner em-ok" style="margin-bottom:12px">
+          <div class="em-ico">✨</div>
+          <div class="em-body">
+            <div class="em-title">Hóa học đang tiến bộ thật sự</div>
+            <div class="em-desc">Phần phương trình hóa học: độ chính xác của bạn tăng từ 61% lên 79% so với tuần trước.</div>
+          </div>
+        </div>
+
+        <div class="wellness-indicators">
+          <div class="wi">
+            <div class="wi-ico">🎯</div>
+            <div class="wi-name">Tập trung</div>
+            <div class="wi-bar"><div class="wi-fill" style="width:80%;background:var(--blue)"></div></div>
+            <div class="wi-val" style="color:var(--blue)">Cao</div>
+          </div>
+          <div class="wi">
+            <div class="wi-ico">⚡</div>
+            <div class="wi-name">Năng lượng</div>
+            <div class="wi-bar"><div class="wi-fill" style="width:52%;background:var(--orange)"></div></div>
+            <div class="wi-val" style="color:var(--orange)">TB</div>
+          </div>
+          <div class="wi">
+            <div class="wi-ico">😌</div>
+            <div class="wi-name">Căng thẳng</div>
+            <div class="wi-bar"><div class="wi-fill" style="width:30%;background:var(--green)"></div></div>
+            <div class="wi-val" style="color:var(--green)">Thấp</div>
+          </div>
+        </div>
+
+        <div style="margin-top:13px;padding:10px 13px;background:var(--bg3);border-radius:10px;border:1px solid var(--border)">
+          <div style="font-size:.68rem;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Tần suất hỏi hôm nay</div>
+          <div class="sparkline" id="sparkline">
+            <!-- rendered by JS -->
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:4px">
+            <span style="font-size:.6rem;color:var(--t3)">7:00</span>
+            <span style="font-size:.6rem;color:var(--t3)">12:00</span>
+            <span style="font-size:.6rem;color:var(--t3)">17:00</span>
+            <span style="font-size:.6rem;color:var(--t3)">22:00</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PREDICTION + COMPARISON -->
+  <div class="section-label">Dự đoán & So sánh hiệu suất</div>
+  <div class="grid-bot">
+
+    <!-- Weekly Comparison -->
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">📈 Tuần này vs Tuần trước</div>
+          <div class="card-sub">Thời gian học hiệu quả theo môn (giờ)</div>
+        </div>
+        <div class="card-badge">+14% tổng thể</div>
+      </div>
+      <div class="card-body">
+        <div class="cmp-legend">
+          <div class="cmp-leg-item"><div class="cmp-leg-dot" style="background:var(--blue)"></div>Tuần này</div>
+          <div class="cmp-leg-item"><div class="cmp-leg-dot" style="background:var(--t3)"></div>Tuần trước</div>
+        </div>
+        <div class="compare-wrap">
+          <div class="cmp-row">
+            <div class="cmp-name">Toán</div>
+            <div class="cmp-bars">
+              <div class="cmp-bar-row">
+                <div class="cmp-bar-bg"><div class="cmp-bar-fill" style="width:84%;background:var(--blue)"></div></div>
+                <div class="cmp-bar-lbl" style="color:var(--blue)">8.4h</div>
+              </div>
+              <div class="cmp-bar-row">
+                <div class="cmp-bar-bg"><div class="cmp-bar-fill" style="width:70%;background:var(--t3)"></div></div>
+                <div class="cmp-bar-lbl" style="color:var(--t3)">7.0h</div>
+              </div>
+            </div>
+          </div>
+          <div class="cmp-row">
+            <div class="cmp-name">Hóa học</div>
+            <div class="cmp-bars">
+              <div class="cmp-bar-row">
+                <div class="cmp-bar-bg"><div class="cmp-bar-fill" style="width:62%;background:var(--teal)"></div></div>
+                <div class="cmp-bar-lbl" style="color:var(--teal)">6.2h</div>
+              </div>
+              <div class="cmp-bar-row">
+                <div class="cmp-bar-bg"><div class="cmp-bar-fill" style="width:55%;background:var(--t3)"></div></div>
+                <div class="cmp-bar-lbl" style="color:var(--t3)">5.5h</div>
+              </div>
+            </div>
+          </div>
+          <div class="cmp-row">
+            <div class="cmp-name">T. Anh</div>
+            <div class="cmp-bars">
+              <div class="cmp-bar-row">
+                <div class="cmp-bar-bg"><div class="cmp-bar-fill" style="width:50%;background:var(--green)"></div></div>
+                <div class="cmp-bar-lbl" style="color:var(--green)">5.0h</div>
+              </div>
+              <div class="cmp-bar-row">
+                <div class="cmp-bar-bg"><div class="cmp-bar-fill" style="width:58%;background:var(--t3)"></div></div>
+                <div class="cmp-bar-lbl" style="color:var(--t3)">5.8h</div>
+              </div>
+            </div>
+          </div>
+          <div class="cmp-row">
+            <div class="cmp-name">Vật lý</div>
+            <div class="cmp-bars">
+              <div class="cmp-bar-row">
+                <div class="cmp-bar-bg"><div class="cmp-bar-fill" style="width:48%;background:var(--orange)"></div></div>
+                <div class="cmp-bar-lbl" style="color:var(--orange)">4.8h</div>
+              </div>
+              <div class="cmp-bar-row">
+                <div class="cmp-bar-bg"><div class="cmp-bar-fill" style="width:40%;background:var(--t3)"></div></div>
+                <div class="cmp-bar-lbl" style="color:var(--t3)">4.0h</div>
+              </div>
+            </div>
+          </div>
+          <div class="cmp-row">
+            <div class="cmp-name">Ngữ văn</div>
+            <div class="cmp-bars">
+              <div class="cmp-bar-row">
+                <div class="cmp-bar-bg"><div class="cmp-bar-fill" style="width:30%;background:var(--pink)"></div></div>
+                <div class="cmp-bar-lbl" style="color:var(--pink)">3.0h</div>
+              </div>
+              <div class="cmp-bar-row">
+                <div class="cmp-bar-bg"><div class="cmp-bar-fill" style="width:42%;background:var(--t3)"></div></div>
+                <div class="cmp-bar-lbl" style="color:var(--t3)">4.2h</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;padding:11px 13px;background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.12);border-radius:10px">
+          <div style="font-size:.74rem;color:var(--t1);font-weight:600;margin-bottom:3px">⚠️ Ngữ văn đang giảm 28%</div>
+          <div style="font-size:.7rem;color:var(--t2);line-height:1.5">Tuần này bạn dành ít thời gian hơn cho Văn. Đây có thể ảnh hưởng đến kỹ năng viết kỳ thi.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Prediction -->
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">🎯 Dự đoán điểm thi</div>
+          <div class="card-sub">Ước tính dựa trên tốc độ ôn tập hiện tại · kỳ thi còn 68 ngày</div>
+        </div>
+        <div class="card-badge orange">Ước tính</div>
+      </div>
+      <div class="card-body">
+
+        <div class="pred-subject-row">
+          <div class="pred-subj"><div class="pred-subj-dot" style="background:var(--blue)"></div><div class="pred-subj-name">Toán học</div></div>
+          <div class="pred-scores">
+            <span class="pred-now" style="color:var(--blue)">7.8</span>
+            <span class="pred-arrow">→</span>
+            <span class="pred-target" style="background:rgba(52,211,153,.1);color:var(--green)">8.4</span>
+          </div>
+        </div>
+        <div class="pred-hint" style="margin-bottom:14px">
+          Ôn thêm <strong>20 phút/ngày</strong> cho cực trị và tích phân, khả năng đạt 8+ sẽ tăng khoảng <strong>35%</strong>.
+        </div>
+
+        <div class="pred-subject-row">
+          <div class="pred-subj"><div class="pred-subj-dot" style="background:var(--orange)"></div><div class="pred-subj-name">Vật lý</div></div>
+          <div class="pred-scores">
+            <span class="pred-now" style="color:var(--orange)">6.5</span>
+            <span class="pred-arrow">→</span>
+            <span class="pred-target" style="background:rgba(251,146,60,.1);color:var(--orange)">7.1</span>
+          </div>
+        </div>
+        <div class="pred-hint" style="margin-bottom:14px">
+          Dao động cơ học là điểm yếu nhất. <strong>3 buổi luyện đề</strong> trong tuần tới có thể cải thiện được ~0.6 điểm.
+        </div>
+
+        <div class="pred-subject-row">
+          <div class="pred-subj"><div class="pred-subj-dot" style="background:var(--green)"></div><div class="pred-subj-name">Tiếng Anh</div></div>
+          <div class="pred-scores">
+            <span class="pred-now" style="color:var(--green)">9.0</span>
+            <span class="pred-arrow">→</span>
+            <span class="pred-target" style="background:rgba(52,211,153,.1);color:var(--green)">9.2</span>
+          </div>
+        </div>
+        <div class="pred-hint" style="margin-bottom:14px">
+          Đã ở mức tốt. Duy trì luyện Writing 15 phút/ngày là đủ — không cần tăng thêm.
+        </div>
+
+        <div class="pred-subject-row">
+          <div class="pred-subj"><div class="pred-subj-dot" style="background:var(--pink)"></div><div class="pred-subj-name">Ngữ văn</div></div>
+          <div class="pred-scores">
+            <span class="pred-now" style="color:var(--pink)">6.0</span>
+            <span class="pred-arrow">→</span>
+            <span class="pred-target" style="background:rgba(248,113,113,.1);color:var(--red)">6.3</span>
+          </div>
+        </div>
+        <div class="pred-hint">
+          Nếu tiếp tục với nhịp hiện tại, điểm Văn khó tăng nhiều. <strong>1 bài nghị luận/tuần</strong> là can thiệp đơn giản nhất.
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- STRATEGIES + ACTIVITY + RADAR -->
+  <div class="section-label">Chiến lược & Nhật ký học</div>
+  <div class="grid-last">
+
+    <!-- Personalized Strategies -->
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">🧭 Chiến lược cá nhân hóa</div>
+          <div class="card-sub">AI phân tích dựa trên dữ liệu học của bạn</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="strategy-list">
+
+          <div class="strat">
+            <div class="strat-ico" style="background:rgba(248,113,113,.1)">🚨</div>
+            <div class="strat-body">
+              <div class="strat-title">Ưu tiên Vật lý tuần tới</div>
+              <div class="strat-desc">Dao động cơ học chiếm ~20% đề thi. Bạn hiện đạt 45% độ chính xác ở phần này — còn nhiều chỗ để cải thiện.</div>
+              <div class="strat-tag tag-high">⚡ Ưu tiên cao</div>
+            </div>
+          </div>
+
+          <div class="strat">
+            <div class="strat-ico" style="background:rgba(251,146,60,.1)">📝</div>
+            <div class="strat-body">
+              <div class="strat-title">Thêm 1 bài văn mỗi tuần</div>
+              <div class="strat-desc">Nghị luận là điểm trừ thường xuyên. Chỉ cần viết đều đặn, không cần hoàn hảo ngay từ đầu.</div>
+              <div class="strat-tag tag-med">📋 Ưu tiên vừa</div>
+            </div>
+          </div>
+
+          <div class="strat">
+            <div class="strat-ico" style="background:rgba(52,211,153,.1)">🌙</div>
+            <div class="strat-body">
+              <div class="strat-title">Tránh học sau 23:00</div>
+              <div class="strat-desc">Dữ liệu 2 tuần qua: độ chính xác của bạn giảm 18% khi học sau 23h. Kết thúc sớm hơn thực sự hiệu quả hơn.</div>
+              <div class="strat-tag tag-low">💤 Sức khỏe</div>
+            </div>
+          </div>
+
+          <div class="strat">
+            <div class="strat-ico" style="background:rgba(79,142,247,.1)">🔁</div>
+            <div class="strat-body">
+              <div class="strat-title">Ôn lại sau 24 giờ</div>
+              <div class="strat-desc">Bạn hay quên bài 1-2 ngày sau. Dành 10 phút ôn bài hôm qua trước khi học bài mới sẽ cải thiện điều này.</div>
+              <div class="strat-tag tag-low">📚 Kỹ thuật học</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Activity Log -->
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">🕐 Nhật ký hôm nay</div>
+          <div class="card-sub">Các hoạt động học từ sáng đến giờ</div>
+        </div>
+        <div class="card-badge">34 câu hỏi</div>
+      </div>
+      <div class="card-body">
+        <div class="activity-list">
+
+          <div class="act-item">
+            <div class="act-dot-wrap"><div class="act-dot" style="background:var(--blue)"></div><div class="act-line"></div></div>
+            <div class="act-body">
+              <div class="act-title">Toán – Cực trị hàm số (bài 1–3)</div>
+              <div class="act-sub">Hoàn thành · 14 câu hỏi · Độ chính xác 78%</div>
+            </div>
+            <div class="act-time">07:20</div>
+          </div>
+
+          <div class="act-item">
+            <div class="act-dot-wrap"><div class="act-dot" style="background:var(--teal)"></div><div class="act-line"></div></div>
+            <div class="act-body">
+              <div class="act-title">Hóa học – Phương trình oxi hóa khử</div>
+              <div class="act-sub">Hoàn thành · 8 câu hỏi · Độ chính xác 79% ↑</div>
+            </div>
+            <div class="act-time">12:10</div>
+          </div>
+
+          <div class="act-item">
+            <div class="act-dot-wrap"><div class="act-dot" style="background:var(--green)"></div><div class="act-line"></div></div>
+            <div class="act-body">
+              <div class="act-title">Tiếng Anh – IELTS Reading practice</div>
+              <div class="act-sub">Hoàn thành · 6 câu hỏi · Band 7.5 ước tính</div>
+            </div>
+            <div class="act-time">15:30</div>
+          </div>
+
+          <div class="act-item">
+            <div class="act-dot-wrap"><div class="act-dot" style="background:var(--orange)"></div><div class="act-line"></div></div>
+            <div class="act-body">
+              <div class="act-title">Toán – Cực trị hàm số (bài 4)</div>
+              <div class="act-sub">Đang học · 6 câu hỏi · Chưa xong</div>
+            </div>
+            <div class="act-time">19:45</div>
+          </div>
+
+          <div class="act-item">
+            <div class="act-dot-wrap"><div class="act-dot" style="background:var(--t3)"></div></div>
+            <div class="act-body">
+              <div class="act-title" style="color:var(--t3)">Vật lý – Dao động điều hòa</div>
+              <div class="act-sub" style="color:var(--t3)">Chưa học hôm nay · Đã lên lịch 21:00</div>
+            </div>
+            <div class="act-time" style="color:var(--t3)">21:00</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Radar -->
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">🕸️ Năng lực tổng quan</div>
+          <div class="card-sub">Độ thành thục theo từng môn</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="radar-wrap" style="flex-direction:column;gap:16px">
+          <svg viewBox="0 0 200 180" width="100%" style="max-width:220px;margin:0 auto">
+            <defs>
+              <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#4F8EF7" stop-opacity=".4"/>
+                <stop offset="100%" stop-color="#A78BFA" stop-opacity=".2"/>
+              </linearGradient>
+            </defs>
+            <!-- Grids -->
+            <polygon points="100,18 159,50 159,130 100,162 41,130 41,50" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+            <polygon points="100,38 141,64 141,116 100,142 59,116 59,64"  fill="none" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+            <polygon points="100,58 123,78 123,102 100,122 77,102 77,78"  fill="none" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+            <!-- Axes -->
+            <line x1="100" y1="90" x2="100" y2="18"  stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+            <line x1="100" y1="90" x2="159" y2="50"  stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+            <line x1="100" y1="90" x2="159" y2="130" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+            <line x1="100" y1="90" x2="100" y2="162" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+            <line x1="100" y1="90" x2="41"  y2="130" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+            <line x1="100" y1="90" x2="41"  y2="50"  stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+            <!-- Data: Toán 78%, Anh 90%, Lý 55%, Hóa 63%, Văn 48%, Sử 41% -->
+            <polygon points="100,30 154,54 154,120 100,148 52,122 52,58"
+              fill="url(#rg)" stroke="#4F8EF7" stroke-width="1.5" stroke-linejoin="round"/>
+            <!-- Dots -->
+            <circle cx="100" cy="30"  r="3" fill="#4F8EF7"/>
+            <circle cx="154" cy="54"  r="3" fill="#A78BFA"/>
+            <circle cx="154" cy="120" r="3" fill="#14B8A6"/>
+            <circle cx="100" cy="148" r="3" fill="#FB923C"/>
+            <circle cx="52"  cy="122" r="3" fill="#F472B6"/>
+            <circle cx="52"  cy="58"  r="3" fill="#34D399"/>
+            <!-- Labels -->
+            <text x="100" y="12"   text-anchor="middle" font-size="9" fill="#94A3B8" font-family="Sora,sans-serif">Toán 78%</text>
+            <text x="168" y="52"   text-anchor="start"  font-size="9" fill="#94A3B8" font-family="Sora,sans-serif">Anh 90%</text>
+            <text x="166" y="126"  text-anchor="start"  font-size="9" fill="#94A3B8" font-family="Sora,sans-serif">Hóa 63%</text>
+            <text x="100" y="174"  text-anchor="middle" font-size="9" fill="#94A3B8" font-family="Sora,sans-serif">Văn 48%</text>
+            <text x="32"  y="126"  text-anchor="end"    font-size="9" fill="#94A3B8" font-family="Sora,sans-serif">Sử 41%</text>
+            <text x="31"  y="52"   text-anchor="end"    font-size="9" fill="#94A3B8" font-family="Sora,sans-serif">Lý 55%</text>
+          </svg>
+
+          <div class="radar-legend">
+            <div class="rl-item"><div class="rl-dot" style="background:#4F8EF7"></div><div class="rl-name">Toán học</div><div class="rl-val" style="color:#4F8EF7">78%</div></div>
+            <div class="rl-item"><div class="rl-dot" style="background:#A78BFA"></div><div class="rl-name">Tiếng Anh</div><div class="rl-val" style="color:#A78BFA">90%</div></div>
+            <div class="rl-item"><div class="rl-dot" style="background:#34D399"></div><div class="rl-name">Vật lý</div><div class="rl-val" style="color:#34D399">55%</div></div>
+            <div class="rl-item"><div class="rl-dot" style="background:#14B8A6"></div><div class="rl-name">Hóa học</div><div class="rl-val" style="color:#14B8A6">63%</div></div>
+            <div class="rl-item"><div class="rl-dot" style="background:#F472B6"></div><div class="rl-name">Ngữ văn</div><div class="rl-val" style="color:#F472B6">48%</div></div>
+            <div class="rl-item"><div class="rl-dot" style="background:#FB923C"></div><div class="rl-name">Lịch sử</div><div class="rl-val" style="color:#FB923C">41%</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- /page -->
+
+<script>
+/* ── Clock ── */
+function tick(){
+  var d=new Date();
+  var h=String(d.getHours()).padStart(2,'0');
+  var m=String(d.getMinutes()).padStart(2,'0');
+  var s=String(d.getSeconds()).padStart(2,'0');
+  document.getElementById('clock').textContent=h+':'+m+':'+s;
+}
+tick();setInterval(tick,1000);
+
+/* ── Sparkline – tần suất hỏi theo giờ ── */
+var sparkData=[0,2,3,1,0,4,6,3,2,1,0,2,1,3,2,0,1,5,8,6,7,4,2,1];
+// 24 giờ, đỉnh buổi tối (~18-20h)
+var spark=document.getElementById('sparkline');
+var maxV=Math.max.apply(null,sparkData);
+var colors=['#4F8EF7','#7C3AED','#14B8A6','#FB923C'];
+sparkData.forEach(function(v,i){
+  var bar=document.createElement('div');
+  bar.className='spark-bar';
+  var pct=maxV>0?v/maxV*100:0;
+  var c=v>=6?'#F87171':v>=4?'#FB923C':v>=2?'#4F8EF7':'#1C2333';
+  bar.style.cssText='height:'+pct+'%;background:'+c+';opacity:'+(.4+pct*.006)+';flex:1;border-radius:2px 2px 0 0;min-width:0';
+  spark.appendChild(bar);
+});
+
+/* ── Animate progress bars on load ── */
+window.addEventListener('load',function(){
+  var fills=document.querySelectorAll('.prog-fill');
+  fills.forEach(function(f){
+    var w=f.style.width;f.style.width='0';
+    setTimeout(function(){f.style.width=w},100);
+  });
+});
+</script>
+</body>
+</html>

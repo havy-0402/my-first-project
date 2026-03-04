@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đánh Giá Năng Lực – AI Study Buddy</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue:#4A90E2;--blue-d:#2D6BC4;--blue-p:#EBF3FD;
+  --teal:#0D9488;--teal-p:#F0FDFA;
+  --amber:#F59E0B;--amber-d:#D97706;--amber-p:#FFFBEB;
+  --orange:#FFA94D;--orange-d:#FF8C00;--orange-p:#FFF3E8;
+  --green:#16A34A;--green-p:#DCFCE7;
+  --red:#DC2626;--red-p:#FEE2E2;
+  --purple-p:#EDE9FE;
+  --g50:#F8FAFC;--g100:#F1F5F9;--g200:#E2E8F0;--g300:#CBD5E1;
+  --g400:#94A3B8;--g500:#64748B;--g600:#475569;--g800:#1E293B;
+  --ink:#0F1C2E;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;color:var(--ink);background:#EEF4FB;min-height:100vh}
+h1,h2,h3,h4{font-family:'Nunito',sans-serif}
+
+/* NAV */
+.nav{height:60px;padding:0 5%;background:rgba(255,255,255,.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--g200);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:99}
+.nav-brand{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--blue);font-family:'Nunito',sans-serif;font-weight:900;font-size:1.05rem}
+.nav-brand-icon{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--blue),#7BB3EE);display:flex;align-items:center;justify-content:center;font-size:.9rem;box-shadow:0 3px 8px rgba(74,144,226,.3)}
+.nav-back{font-size:.8rem;font-weight:600;color:var(--g500);text-decoration:none;padding:6px 14px;border-radius:100px;background:var(--g100);transition:all .2s}
+.nav-back:hover{background:var(--blue-p);color:var(--blue)}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--g800) 0%,#1e3a5f 60%,#244b7a 100%);padding:44px 5% 52px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-80px;right:-60px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(74,144,226,.15),transparent 65%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-60px;left:-40px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(255,169,77,.12),transparent 65%);pointer-events:none}
+.hero-chip{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);padding:5px 14px;border-radius:100px;font-size:.76rem;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:18px;position:relative}
+.chip-dot{width:6px;height:6px;background:#4ADE80;border-radius:50%;animation:pd 2s infinite}
+@keyframes pd{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.6)}}
+.hero h1{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:900;color:#fff;line-height:1.15;margin-bottom:12px;position:relative}
+.hero h1 span{background:linear-gradient(90deg,var(--orange),#FFB347);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{color:rgba(255,255,255,.7);font-size:.95rem;line-height:1.7;max-width:520px;margin:0 auto 26px;position:relative}
+.hero-pills{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;position:relative}
+.hero-pill{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);padding:5px 13px;border-radius:100px;font-size:.76rem;font-weight:600;color:rgba(255,255,255,.88)}
+.pill-req{background:rgba(74,144,226,.25);border-color:rgba(74,144,226,.4)}
+.pill-thpt{background:rgba(13,148,136,.25);border-color:rgba(13,148,136,.4)}
+.pill-thcs{background:rgba(245,158,11,.2);border-color:rgba(245,158,11,.35)}
+
+/* LAYOUT */
+.wrap{max-width:1160px;margin:0 auto;padding:28px 5% 64px;display:grid;grid-template-columns:430px 1fr;gap:22px;align-items:start}
+
+/* FORM CARD */
+.fcard{background:#fff;border-radius:22px;border:1.5px solid var(--g200);box-shadow:0 12px 48px rgba(15,28,46,.1);overflow:hidden;position:sticky;top:72px}
+.fcard-head{background:linear-gradient(135deg,var(--g800),#2D3F55);padding:18px 22px;display:flex;align-items:center;gap:12px}
+.fcard-head-ico{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,var(--blue),#7BB3EE);display:flex;align-items:center;justify-content:center;font-size:1.1rem;box-shadow:0 4px 10px rgba(74,144,226,.4)}
+.fcard-head h2{color:#fff;font-size:.95rem;font-weight:800}
+.fcard-head p{color:rgba(255,255,255,.45);font-size:.71rem;margin-top:2px}
+.fscroll{padding:18px 20px;max-height:calc(100vh - 190px);overflow-y:auto}
+.fscroll::-webkit-scrollbar{width:3px}
+.fscroll::-webkit-scrollbar-thumb{background:var(--g200);border-radius:3px}
+
+/* GROUPS */
+.sgroup{margin-bottom:16px}
+.sg-head{display:flex;align-items:center;gap:7px;font-size:.66rem;font-weight:900;text-transform:uppercase;letter-spacing:1.3px;margin-bottom:9px;padding-bottom:7px;border-bottom:2px solid var(--g100)}
+.sgh-req{color:var(--blue-d)}.sgh-thpt{color:var(--teal)}.sgh-thcs{color:var(--amber-d)}
+.sg-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dot-req{background:var(--blue)}.dot-thpt{background:var(--teal)}.dot-thcs{background:var(--amber)}
+.sg-badge{margin-left:auto;font-size:.58rem;font-weight:800;padding:2px 7px;border-radius:100px;text-transform:none;letter-spacing:0}
+.sb-req{background:var(--blue-p);color:var(--blue-d)}.sb-thpt{background:var(--teal-p);color:var(--teal)}.sb-thcs{background:var(--amber-p);color:var(--amber-d)}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+/* INPUT ITEMS */
+.sitem{background:var(--g50);border:1.5px solid var(--g200);border-radius:12px;padding:9px 11px;position:relative;transition:border-color .15s,background .15s,box-shadow .15s}
+.sitem.req-t:focus-within{border-color:var(--blue);background:var(--blue-p);box-shadow:0 0 0 3px rgba(74,144,226,.1)}
+.sitem.thpt-t:focus-within{border-color:var(--teal);background:var(--teal-p);box-shadow:0 0 0 3px rgba(13,148,136,.1)}
+.sitem.thcs-t:focus-within{border-color:var(--amber);background:var(--amber-p);box-shadow:0 0 0 3px rgba(245,158,11,.1)}
+.sitem.has-v{border-color:rgba(74,144,226,.35);background:#fff}
+.sitem.thcs-t.has-v{border-color:rgba(245,158,11,.35)}
+.sitem.thpt-t.has-v{border-color:rgba(13,148,136,.35)}
+.sitem.serr{border-color:var(--red)!important;background:var(--red-p)!important;box-shadow:0 0 0 3px rgba(220,38,38,.08)!important}
+.sitem-lbl{font-size:.72rem;font-weight:700;color:var(--g500);margin-bottom:4px;display:flex;align-items:center;gap:5px}
+.req-star{color:var(--red);font-size:.75rem}
+.mtag{font-size:.55rem;font-weight:800;padding:1px 5px;border-radius:4px}
+.mt-thpt{background:var(--teal-p);color:var(--teal)}.mt-thcs{background:var(--amber-p);color:var(--amber-d)}.mt-intg{background:var(--purple-p);color:#6D28D9}
+.srow{position:relative;display:flex;align-items:center}
+.sinput{width:100%;border:none;background:transparent;outline:none;font-family:'Nunito',sans-serif;font-weight:900;font-size:1rem;color:var(--ink);border-bottom:2px solid var(--g200);padding:3px 26px 3px 2px;transition:border-color .15s;-moz-appearance:textfield}
+.sinput::-webkit-outer-spin-button,.sinput::-webkit-inner-spin-button{-webkit-appearance:none}
+.sinput:focus{border-color:var(--blue)}
+.sitem.thcs-t .sinput:focus{border-color:var(--amber)}
+.sitem.thpt-t .sinput:focus{border-color:var(--teal)}
+.sinput::placeholder{font-size:.73rem;font-weight:400;font-family:'DM Sans',sans-serif;color:var(--g300)}
+.sunit{position:absolute;right:0;bottom:4px;font-size:.6rem;color:var(--g400);font-weight:700;pointer-events:none}
+.sgd{position:absolute;top:-5px;right:-5px;width:16px;height:16px;border-radius:50%;display:none;align-items:center;justify-content:center;font-size:.54rem;font-weight:900;color:#fff;border:2px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,.13);z-index:1}
+.sitem.has-v .sgd{display:flex}
+.gdG{background:var(--green)}.gdK{background:var(--blue)}.gdT{background:var(--orange)}.gdY{background:var(--red)}
+.serr-msg{font-size:.62rem;color:var(--red);font-weight:700;margin-top:3px;display:none}
+.sitem.serr .serr-msg{display:block}
+.thcs-box{margin-top:8px;background:linear-gradient(135deg,var(--amber-p),#FEF9E7);border:1.5px solid rgba(245,158,11,.2);border-radius:10px;padding:9px 12px;display:flex;gap:8px}
+.thcs-box p{font-size:.7rem;color:var(--amber-d);line-height:1.5}
+.thcs-box strong{color:#92400E}
+.fdiv{height:1px;background:var(--g200);margin:13px 0}
+
+/* SUBMIT */
+.fbar{padding:12px 20px;border-top:1px solid var(--g200);background:var(--g50);display:flex;gap:8px;align-items:center}
+.btn-calc{flex:1;border:none;cursor:pointer;background:linear-gradient(135deg,var(--orange),var(--orange-d));color:#fff;padding:12px 16px;border-radius:100px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.88rem;box-shadow:0 5px 16px rgba(255,140,0,.28);transition:all .25s;display:flex;align-items:center;justify-content:center;gap:7px}
+.btn-calc:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,140,0,.4)}
+.btn-calc:active{transform:none}
+.btn-rst{border:none;cursor:pointer;padding:12px 13px;border-radius:100px;background:var(--g200);color:var(--g600);font-family:'Nunito',sans-serif;font-weight:700;font-size:.8rem;transition:all .2s}
+.btn-rst:hover{background:var(--g300)}
+
+/* RESULTS */
+.rp{display:flex;flex-direction:column;gap:16px}
+.empty-st{background:#fff;border-radius:22px;border:2px dashed var(--g200);padding:56px 22px;text-align:center;box-shadow:0 2px 10px rgba(15,28,46,.05)}
+.empty-ico{font-size:3rem;margin-bottom:12px}
+.empty-st h4{font-size:.98rem;font-weight:900;margin-bottom:7px}
+.empty-st p{font-size:.84rem;color:var(--g400);line-height:1.65}
+.rcard{background:#fff;border-radius:22px;border:1.5px solid var(--g200);overflow:hidden;box-shadow:0 3px 16px rgba(15,28,46,.06);animation:fu .4s ease both}
+@keyframes fu{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.rcard:nth-child(1){animation-delay:0s}.rcard:nth-child(2){animation-delay:.05s}.rcard:nth-child(3){animation-delay:.1s}.rcard:nth-child(4){animation-delay:.15s}.rcard:nth-child(5){animation-delay:.2s}.rcard:nth-child(6){animation-delay:.25s}.rcard:nth-child(7){animation-delay:.3s}.rcard:nth-child(8){animation-delay:.35s}
+.rc-head{padding:14px 18px;border-bottom:1px solid var(--g100);display:flex;align-items:center;gap:9px}
+.rc-ico{width:34px;height:34px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.95rem}
+.ico-b{background:var(--blue-p)}.ico-g{background:var(--green-p)}.ico-o{background:var(--orange-p)}.ico-t{background:var(--teal-p)}.ico-p{background:var(--purple-p)}.ico-y{background:#FEFCE8}.ico-a{background:var(--amber-p)}
+.rc-title{font-size:.88rem;font-weight:800;color:var(--ink)}.rc-sub{font-size:.7rem;color:var(--g400);margin-top:1px}.rc-body{padding:16px 18px}
+
+/* SCORE BANNER */
+.sbanner{border-radius:22px;padding:22px 20px;display:flex;align-items:center;gap:18px;position:relative;overflow:hidden;animation:fu .3s ease both}
+.sbanner::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 40%,rgba(255,255,255,.15),transparent 55%)}
+.sb-gioi{background:linear-gradient(135deg,#059669,#10B981)}.sb-kha{background:linear-gradient(135deg,var(--blue-d),var(--blue))}.sb-tb{background:linear-gradient(135deg,#D97706,var(--orange))}.sb-yeu{background:linear-gradient(135deg,#B91C1C,var(--red))}
+.sb-ring{width:84px;height:84px;border-radius:50%;flex-shrink:0;background:rgba(255,255,255,.2);border:2.5px solid rgba(255,255,255,.4);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+.sb-num{font-family:'Nunito',sans-serif;font-weight:900;font-size:1.75rem;color:#fff;line-height:1}.sb-lbl{font-size:.6rem;color:rgba(255,255,255,.8);font-weight:700;margin-top:1px}
+.sb-info{flex:1;position:relative}.sb-rank{font-family:'Nunito',sans-serif;font-weight:900;font-size:1.3rem;color:#fff}.sb-desc{color:rgba(255,255,255,.8);font-size:.8rem;margin-top:5px;line-height:1.5}.sb-cnt{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.18);padding:3px 10px;border-radius:100px;font-size:.68rem;font-weight:700;color:#fff;margin-top:7px}
+
+/* TABLE */
+.stbl{width:100%;border-collapse:collapse}.stbl th{font-size:.64rem;font-weight:800;color:var(--g400);text-transform:uppercase;letter-spacing:.8px;padding:0 0 8px;border-bottom:1.5px solid var(--g200);text-align:left}.stbl th:nth-child(2){text-align:center}.stbl th:last-child{text-align:right}.stbl td{padding:7px 0;font-size:.82rem;border-bottom:1px solid var(--g100);vertical-align:middle}.stbl tr:last-child td{border-bottom:none}.td-n{font-weight:600}.td-s{text-align:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:.92rem}.td-r{text-align:right}
+.lvl{font-size:.54rem;font-weight:800;padding:1px 5px;border-radius:4px;margin-left:4px;vertical-align:middle}.lv-req{background:var(--blue-p);color:var(--blue-d)}.lv-thpt{background:var(--teal-p);color:var(--teal)}.lv-thcs{background:var(--amber-p);color:var(--amber-d)}
+.gpill{display:inline-flex;align-items:center;padding:2px 8px;border-radius:100px;font-size:.67rem;font-weight:800}.gp-G{background:var(--green-p);color:#166534}.gp-K{background:var(--blue-p);color:var(--blue-d)}.gp-T{background:var(--orange-p);color:#92400E}.gp-Y{background:var(--red-p);color:#991B1B}
+
+/* BARS */
+.brow{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}.bname{font-size:.8rem;font-weight:700;color:var(--ink)}.bval{font-family:'Nunito',sans-serif;font-weight:900;font-size:.86rem}.bbar{height:6px;background:var(--g100);border-radius:100px;overflow:hidden}.bfill{height:100%;border-radius:100px}
+
+/* THCS CARDS */
+.fc-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:12px}.fcrd{border-radius:10px;padding:13px 10px;text-align:center;border:1.5px solid transparent}.fc-hi{background:var(--green-p);border-color:rgba(22,163,74,.2)}.fc-md{background:var(--blue-p);border-color:rgba(74,144,226,.18)}.fc-lo{background:var(--g50);border-color:var(--g200)}.fc-em{background:var(--g50);border-color:var(--g200);opacity:.55}.fc-ico{font-size:1.4rem;margin-bottom:5px}.fc-name{font-size:.73rem;font-weight:800;margin-bottom:3px;color:var(--ink)}.fc-score{font-family:'Nunito',sans-serif;font-weight:900;font-size:1.05rem;margin-bottom:3px}.fc-lvl{font-size:.68rem;color:var(--g500)}
+.warn-box{background:linear-gradient(135deg,var(--amber-p),#FEF9E7);border:1.5px solid rgba(245,158,11,.2);border-radius:10px;padding:9px 12px;display:flex;gap:8px}.warn-box p{font-size:.71rem;color:var(--amber-d);line-height:1.5}.warn-box strong{color:#92400E}
+
+/* TEND */
+.tlist{display:flex;flex-direction:column;gap:8px}.titem{display:flex;align-items:flex-start;gap:9px;padding:10px 12px;border-radius:10px;border:1.5px solid transparent}.t-s{background:var(--green-p);border-color:rgba(22,163,74,.2)}.t-m{background:var(--teal-p);border-color:rgba(13,148,136,.18)}.t-w{background:var(--g50);border-color:var(--g200)}.tico{width:28px;height:28px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.88rem}.t-s .tico{background:rgba(22,163,74,.14)}.t-m .tico{background:rgba(13,148,136,.12)}.t-w .tico{background:var(--g200)}.tbody{flex:1}.tname{font-size:.82rem;font-weight:800;color:var(--ink)}.tdesc{font-size:.72rem;color:var(--g500);margin-top:2px;line-height:1.45}.tavg{font-family:'Nunito',sans-serif;font-weight:900;font-size:.78rem;padding:2px 9px;border-radius:100px;background:rgba(255,255,255,.75);white-space:nowrap;flex-shrink:0;align-self:center}
+
+/* COMBO */
+.cw{display:flex;flex-wrap:wrap;gap:8px}.cchip{background:var(--teal-p);border:1.5px solid rgba(13,148,136,.22);border-radius:10px;padding:9px 13px;transition:all .2s}.cchip:hover{border-color:var(--teal);box-shadow:0 3px 10px rgba(13,148,136,.12)}.cc-code{font-family:'Nunito',sans-serif;font-weight:900;font-size:.92rem;color:var(--teal)}.cc-name{font-size:.7rem;color:var(--g500);margin-top:2px}.cc-avg{display:inline-flex;margin-top:4px}
+
+/* NGHE */
+.nw{display:flex;flex-wrap:wrap;gap:7px}.ntag{display:flex;align-items:center;gap:5px;background:#fff;border:1.5px solid var(--g200);padding:5px 12px;border-radius:100px;font-size:.8rem;font-weight:600;color:var(--g600);transition:all .2s}.ntag:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-p)}
+
+/* ADVICE */
+.alist{display:flex;flex-direction:column;gap:8px}.aitem{display:flex;gap:9px;padding:10px 12px;background:var(--g50);border-radius:10px;border-left:3px solid transparent;transition:all .2s}.aitem:hover{background:var(--blue-p);border-left-color:var(--blue)}.anum{width:20px;height:20px;border-radius:50%;flex-shrink:0;background:var(--blue-p);color:var(--blue);font-family:'Nunito',sans-serif;font-weight:900;font-size:.66rem;display:flex;align-items:center;justify-content:center}.atxt{font-size:.8rem;color:var(--g600);line-height:1.55}.atxt strong{color:var(--ink)}
+.div-line{height:1px;background:var(--g100);margin:12px 0}
+.sec-lbl{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.8px;margin-bottom:9px;display:flex;align-items:center;gap:5px}
+
+/* FOOTER */
+footer{background:var(--g800);color:#fff;padding:40px 5% 24px}
+.foot-in{max-width:1160px;margin:0 auto}
+.foot-top{display:grid;grid-template-columns:2fr 1fr 1fr;gap:36px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:18px}
+.f-logo{display:flex;align-items:center;gap:8px;font-family:'Nunito',sans-serif;font-weight:900;font-size:1rem;color:#fff;margin-bottom:10px}
+.f-logo-ico{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--blue),#7BB3EE);display:flex;align-items:center;justify-content:center;font-size:.8rem}
+.f-desc{font-size:.8rem;color:rgba(255,255,255,.45);line-height:1.65;margin-bottom:12px}
+.api-chips{display:flex;flex-wrap:wrap;gap:5px}.api-chip{font-size:.65rem;font-weight:600;color:rgba(255,255,255,.55);background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);padding:2px 7px;border-radius:100px}
+.fcol h5{font-weight:800;font-size:.82rem;color:rgba(255,255,255,.85);margin-bottom:11px}
+.fcol ul{list-style:none}.fcol ul li{margin-bottom:7px}.fcol ul li a{color:rgba(255,255,255,.45);text-decoration:none;font-size:.78rem;transition:color .2s}.fcol ul li a:hover{color:#fff}
+.cr-name{color:#fff;font-weight:700;font-size:.82rem}.cr-role{color:rgba(255,255,255,.38);font-size:.68rem;margin-top:1px;margin-bottom:9px}
+.foot-bot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px}.foot-bot p{color:rgba(255,255,255,.3);font-size:.74rem}.foot-bot strong{color:rgba(255,255,255,.55)}
+
+/* RESPONSIVE */
+@media(max-width:980px){.wrap{grid-template-columns:1fr}.fcard{position:static}.fscroll{max-height:none;overflow-y:visible}.foot-top{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.wrap{padding:18px 4% 48px}.sgrid{grid-template-columns:1fr}.fc-grid{grid-template-columns:1fr 1fr}.foot-top{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="#" class="nav-brand">
+    <span class="nav-brand-icon">🤖</span>AI Study Buddy
+  </a>
+  <a href="ai-study-buddy.html" class="nav-back">← Trang chủ</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-chip"><span class="chip-dot"></span>GDPT 2018 · Miễn phí</div>
+  <h1>Đánh Giá <span>Năng Lực Học Tập</span></h1>
+  <p>Nhập điểm các môn, AI phân tích nền tảng THCS, định hướng THPT, gợi ý tổ hợp thi và ngành nghề phù hợp với bạn.</p>
+  <div class="hero-pills">
+    <span class="hero-pill pill-req">⭐ Bắt buộc nhập</span>
+    <span class="hero-pill pill-thpt">🎓 THPT – Định hướng khối thi</span>
+    <span class="hero-pill pill-thcs">🏫 THCS – Đánh giá nền tảng</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- FORM -->
+  <div class="fcard">
+    <div class="fcard-head">
+      <div class="fcard-head-ico">✏️</div>
+      <div><h2>Nhập điểm của bạn</h2><p>Điểm 0–10 · Chỉ nhập số · Môn ★ bắt buộc</p></div>
+    </div>
+    <div class="fscroll">
+
+      <!-- BẮT BUỘC -->
+      <div class="sgroup">
+        <div class="sg-head sgh-req"><span class="sg-dot dot-req"></span>Môn bắt buộc<span class="sg-badge sb-req">★ Phải nhập</span></div>
+        <div class="sgrid">
+          <div class="sitem req-t" id="w-toan">
+            <div class="sitem-lbl">Toán học <span class="req-star">★</span></div>
+            <div class="srow"><input class="sinput" type="number" id="s-toan" min="0" max="10" step="0.1" placeholder="Nhập điểm…" data-req="1" data-name="Toán" oninput="onInput(this)" onblur="onBlur(this)"><span class="sunit">/10</span></div>
+            <div class="serr-msg">Nhập điểm 0–10</div><div class="sgd" id="gd-toan"></div>
+          </div>
+          <div class="sitem req-t" id="w-van">
+            <div class="sitem-lbl">Ngữ văn <span class="req-star">★</span></div>
+            <div class="srow"><input class="sinput" type="number" id="s-van" min="0" max="10" step="0.1" placeholder="Nhập điểm…" data-req="1" data-name="Ngữ văn" oninput="onInput(this)" onblur="onBlur(this)"><span class="sunit">/10</span></div>
+            <div class="serr-msg">Nhập điểm 0–10</div><div class="sgd" id="gd-van"></div>
+          </div>
+          <div class="sitem req-t" id="w-anh">
+            <div class="sitem-lbl">Tiếng Anh <span class="req-star">★</span></div>
+            <div class="srow"><input class="sinput" type="number" id="s-anh" min="0" max="10" step="0.1" placeholder="Nhập điểm…" data-req="1" data-name="Tiếng Anh" oninput="onInput(this)" onblur="onBlur(this)"><span class="sunit">/10</span></div>
+            <div class="serr-msg">Nhập điểm 0–10</div><div class="sgd" id="gd-anh"></div>
+          </div>
+          <div class="sitem req-t" id="w-su">
+            <div class="sitem-lbl">Lịch sử <span class="req-star">★</span></div>
+            <div class="srow"><input class="sinput" type="number" id="s-su" min="0" max="10" step="0.1" placeholder="Nhập điểm…" data-req="1" data-name="Lịch sử" oninput="onInput(this)" onblur="onBlur(this)"><span class="sunit">/10</span></div>
+            <div class="serr-msg">Nhập điểm 0–10</div><div class="sgd" id="gd-su"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fdiv"></div>
+
+      <!-- THPT -->
+      <div class="sgroup">
+        <div class="sg-head sgh-thpt"><span class="sg-dot dot-thpt"></span>Môn THPT tự chọn<span class="sg-badge sb-thpt">🎓 Định hướng khối</span></div>
+        <div class="sgrid">
+          <div class="sitem thpt-t" id="w-dia"><div class="sitem-lbl">Địa lí <span class="mtag mt-thpt">THPT</span></div><div class="srow"><input class="sinput" type="number" id="s-dia" min="0" max="10" step="0.1" placeholder="Bỏ trống được" data-req="0" data-name="Địa lí" oninput="onInput(this)"><span class="sunit">/10</span></div><div class="sgd" id="gd-dia"></div></div>
+          <div class="sitem thpt-t" id="w-ly"><div class="sitem-lbl">Vật lý <span class="mtag mt-thpt">THPT</span></div><div class="srow"><input class="sinput" type="number" id="s-ly" min="0" max="10" step="0.1" placeholder="Bỏ trống được" data-req="0" data-name="Vật lý" oninput="onInput(this)"><span class="sunit">/10</span></div><div class="sgd" id="gd-ly"></div></div>
+          <div class="sitem thpt-t" id="w-hoa"><div class="sitem-lbl">Hóa học <span class="mtag mt-thpt">THPT</span></div><div class="srow"><input class="sinput" type="number" id="s-hoa" min="0" max="10" step="0.1" placeholder="Bỏ trống được" data-req="0" data-name="Hóa học" oninput="onInput(this)"><span class="sunit">/10</span></div><div class="sgd" id="gd-hoa"></div></div>
+          <div class="sitem thpt-t" id="w-sinh"><div class="sitem-lbl">Sinh học <span class="mtag mt-thpt">THPT</span></div><div class="srow"><input class="sinput" type="number" id="s-sinh" min="0" max="10" step="0.1" placeholder="Bỏ trống được" data-req="0" data-name="Sinh học" oninput="onInput(this)"><span class="sunit">/10</span></div><div class="sgd" id="gd-sinh"></div></div>
+          <div class="sitem thpt-t" id="w-tin"><div class="sitem-lbl">Tin học <span class="mtag mt-thpt">THPT</span></div><div class="srow"><input class="sinput" type="number" id="s-tin" min="0" max="10" step="0.1" placeholder="Bỏ trống được" data-req="0" data-name="Tin học" oninput="onInput(this)"><span class="sunit">/10</span></div><div class="sgd" id="gd-tin"></div></div>
+          <div class="sitem thpt-t" id="w-cn"><div class="sitem-lbl">Công nghệ <span class="mtag mt-thpt">THPT</span></div><div class="srow"><input class="sinput" type="number" id="s-cn" min="0" max="10" step="0.1" placeholder="Bỏ trống được" data-req="0" data-name="Công nghệ" oninput="onInput(this)"><span class="sunit">/10</span></div><div class="sgd" id="gd-cn"></div></div>
+          <div class="sitem thpt-t" id="w-gdqp"><div class="sitem-lbl">GD Quốc phòng <span class="mtag mt-thpt">THPT</span></div><div class="srow"><input class="sinput" type="number" id="s-gdqp" min="0" max="10" step="0.1" placeholder="Bỏ trống được" data-req="0" data-name="GD Quốc phòng" oninput="onInput(this)"><span class="sunit">/10</span></div><div class="sgd" id="gd-gdqp"></div></div>
+          <div class="sitem thpt-t" id="w-ktpl"><div class="sitem-lbl">Kinh tế &amp; PL <span class="mtag mt-thpt">THPT</span></div><div class="srow"><input class="sinput" type="number" id="s-ktpl" min="0" max="10" step="0.1" placeholder="Bỏ trống được" data-req="0" data-name="Kinh tế &amp; Pháp luật" oninput="onInput(this)"><span class="sunit">/10</span></div><div class="sgd" id="gd-ktpl"></div></div>
+        </div>
+      </div>
+
+      <div class="fdiv"></div>
+
+      <!-- THCS -->
+      <div class="sgroup">
+        <div class="sg-head sgh-thcs"><span class="sg-dot dot-thcs"></span>Môn THCS – Nền tảng<span class="sg-badge sb-thcs">🏫 Tích hợp</span></div>
+        <div class="thcs-box"><span style="font-size:1rem;flex-shrink:0">💡</span><p>Môn THCS chỉ dùng để <strong>đánh giá nền tảng</strong>. Không tính điểm TB và <strong>không gợi ý tổ hợp thi THPT</strong>.</p></div>
+        <div class="sgrid" style="margin-top:10px">
+          <div class="sitem thcs-t" id="w-khtn"><div class="sitem-lbl">KHTN <span class="mtag mt-intg">Tích hợp</span></div><div class="srow"><input class="sinput" type="number" id="s-khtn" min="0" max="10" step="0.1" placeholder="Bỏ trống được" data-req="0" data-name="KHTN (Tích hợp)" oninput="onInput(this)"><span class="sunit">/10</span></div><div class="sgd" id="gd-khtn"></div></div>
+          <div class="sitem thcs-t" id="w-lsdia"><div class="sitem-lbl">Lịch sử &amp; ĐL <span class="mtag mt-intg">Tích hợp</span></div><div class="srow"><input class="sinput" type="number" id="s-lsdia" min="0" max="10" step="0.1" placeholder="Bỏ trống được" data-req="0" data-name="Lịch sử &amp; Địa lí" oninput="onInput(this)"><span class="sunit">/10</span></div><div class="sgd" id="gd-lsdia"></div></div>
+          <div class="sitem thcs-t" id="w-gdcd"><div class="sitem-lbl">Giáo dục CD <span class="mtag mt-thcs">THCS</span></div><div class="srow"><input class="sinput" type="number" id="s-gdcd" min="0" max="10" step="0.1" placeholder="Bỏ trống được" data-req="0" data-name="Giáo dục Công dân" oninput="onInput(this)"><span class="sunit">/10</span></div><div class="sgd" id="gd-gdcd"></div></div>
+        </div>
+      </div>
+
+    </div>
+    <div class="fbar">
+      <button class="btn-calc" onclick="calculate()">🧮 Tính kết quả &amp; Phân tích</button>
+      <button class="btn-rst" onclick="resetAll()" title="Nhập lại">🔄</button>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="rp" id="rp">
+    <div class="empty-st">
+      <div class="empty-ico">🎯</div>
+      <h4>Kết quả phân tích hiển thị ở đây</h4>
+      <p>Nhập điểm các môn bên trái rồi nhấn<br><strong>Tính kết quả &amp; Phân tích</strong></p>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="foot-in">
+    <div class="foot-top">
+      <div>
+        <div class="f-logo"><span class="f-logo-ico">🤖</span> AI Study Buddy</div>
+        <p class="f-desc">Trợ lý học tập AI cá nhân hóa dành riêng cho học sinh THCS – THPT Việt Nam.</p>
+        <div class="api-chips"><span class="api-chip">🤖 Claude AI</span><span class="api-chip">🧠 GPT-4o</span><span class="api-chip">🎙️ ElevenLabs</span><span class="api-chip">🔍 Gemini</span><span class="api-chip">📚 LangChain</span><span class="api-chip">🗣️ Whisper STT</span></div>
+      </div>
+      <div class="fcol">
+        <h5>Sản phẩm</h5>
+        <ul><li><a href="ai-study-buddy.html">Trang chủ</a></li><li><a href="#">Tính năng</a></li><li><a href="#">Dashboard</a></li><li><a href="#">Podcast AI</a></li></ul>
+      </div>
+      <div class="fcol">
+        <h5>👥 Người sáng tạo</h5>
+        <div class="cr-name">Nguyễn Mỹ Hà Vy</div><div class="cr-role">Product Design &amp; UX</div>
+        <div class="cr-name">Nguyễn Xuân Vũ</div><div class="cr-role">AI Engineering &amp; Backend</div>
+        <div class="cr-name">Võ Phạm Minh Tài</div><div class="cr-role">Frontend &amp; Data Science</div>
+      </div>
+    </div>
+    <div class="foot-bot">
+      <p>© 2025 AI Study Buddy · Được làm với ❤️ bởi <strong>Nguyễn Mỹ Hà Vy · Nguyễn Xuân Vũ · Võ Phạm Minh Tài</strong></p>
+      <p>Việt Nam 🇻🇳</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+var SUBJECTS=[
+  {id:'toan',name:'Toán',req:true,grp:'req'},
+  {id:'van',name:'Ngữ văn',req:true,grp:'req'},
+  {id:'anh',name:'Tiếng Anh',req:true,grp:'req'},
+  {id:'su',name:'Lịch sử',req:true,grp:'req'},
+  {id:'dia',name:'Địa lí',req:false,grp:'thpt'},
+  {id:'ly',name:'Vật lý',req:false,grp:'thpt'},
+  {id:'hoa',name:'Hóa học',req:false,grp:'thpt'},
+  {id:'sinh',name:'Sinh học',req:false,grp:'thpt'},
+  {id:'tin',name:'Tin học',req:false,grp:'thpt'},
+  {id:'cn',name:'Công nghệ',req:false,grp:'thpt'},
+  {id:'gdqp',name:'GD Quốc phòng',req:false,grp:'thpt'},
+  {id:'ktpl',name:'Kinh tế & Pháp luật',req:false,grp:'thpt'},
+  {id:'khtn',name:'KHTN (Tích hợp)',req:false,grp:'thcs'},
+  {id:'lsdia',name:'Lịch sử & Địa lí',req:false,grp:'thcs'},
+  {id:'gdcd',name:'GD Công dân',req:false,grp:'thcs'}
+];
+var COMBOS=[
+  {code:'A00',subs:['toan','ly','hoa'],name:'Toán – Lý – Hóa'},
+  {code:'A01',subs:['toan','ly','anh'],name:'Toán – Lý – Anh'},
+  {code:'B00',subs:['toan','hoa','sinh'],name:'Toán – Hóa – Sinh'},
+  {code:'B08',subs:['toan','sinh','anh'],name:'Toán – Sinh – Anh'},
+  {code:'C00',subs:['van','su','dia'],name:'Văn – Sử – Địa'},
+  {code:'C01',subs:['van','toan','ly'],name:'Văn – Toán – Lý'},
+  {code:'D01',subs:['van','toan','anh'],name:'Văn – Toán – Anh'},
+  {code:'D14',subs:['van','su','anh'],name:'Văn – Sử – Anh'},
+  {code:'D15',subs:['van','dia','anh'],name:'Văn – Địa – Anh'},
+  {code:'I00',subs:['toan','ly','tin'],name:'Toán – Lý – Tin'},
+  {code:'KT1',subs:['van','ktpl','anh'],name:'Văn – KT&PL – Anh'},
+  {code:'KT2',subs:['toan','ktpl','anh'],name:'Toán – KT&PL – Anh'}
+];
+
+function getRank(s){
+  if(s>=8)return{t:'Giỏi',c:'G',sb:'sb-gioi',pill:'gp-G'};
+  if(s>=6.5)return{t:'Khá',c:'K',sb:'sb-kha',pill:'gp-K'};
+  if(s>=5)return{t:'Trung bình',c:'T',sb:'sb-tb',pill:'gp-T'};
+  return{t:'Yếu',c:'Y',sb:'sb-yeu',pill:'gp-Y'};
+}
+function sColor(s){if(s>=8)return'#166534';if(s>=6.5)return'#1e40af';if(s>=5)return'#92400e';return'#991b1b'}
+function barGrad(s){if(s>=8)return'linear-gradient(90deg,#16A34A,#4ADE80)';if(s>=6.5)return'linear-gradient(90deg,#4A90E2,#7BB3EE)';if(s>=5)return'linear-gradient(90deg,#FFA94D,#FFB36B)';return'linear-gradient(90deg,#DC2626,#F87171)'}
+function gAvg(sc,keys){var v=[];for(var i=0;i<keys.length;i++){if(sc[keys[i]]!==null)v.push(sc[keys[i]])}if(!v.length)return null;var s=0;for(var i=0;i<v.length;i++)s+=v[i];return s/v.length}
+
+function onInput(el){
+  var id=el.id.replace('s-','');
+  var wrap=document.getElementById('w-'+id);
+  var dot=document.getElementById('gd-'+id);
+  var v=parseFloat(el.value);
+  if(el.value!==''&&!isNaN(v)){
+    if(v<0){el.value='0';v=0}
+    if(v>10){el.value='10';v=10}
+    var r=getRank(v);
+    wrap.classList.add('has-v');
+    wrap.classList.remove('serr');
+    dot.className='sgd gd'+r.c;
+    dot.textContent=r.c;
+  }else{
+    wrap.classList.remove('has-v');
+    dot.className='sgd';
+    dot.textContent='';
+  }
+}
+
+function onBlur(el){
+  if(el.dataset.req!=='1')return;
+  var id=el.id.replace('s-','');
+  var wrap=document.getElementById('w-'+id);
+  if(el.value===''||isNaN(parseFloat(el.value))){wrap.classList.add('serr')}
+  else{wrap.classList.remove('serr')}
+}
+
+function calculate(){
+  var ok=true;
+  for(var i=0;i<SUBJECTS.length;i++){
+    var s=SUBJECTS[i];if(!s.req)continue;
+    var el=document.getElementById('s-'+s.id);
+    if(el.value===''||isNaN(parseFloat(el.value))){
+      document.getElementById('w-'+s.id).classList.add('serr');ok=false;
+    }
+  }
+  if(!ok){
+    var f=document.querySelector('.sitem.serr');
+    if(f)f.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  var sc={};
+  for(var i=0;i<SUBJECTS.length;i++){
+    var s=SUBJECTS[i];
+    var v=document.getElementById('s-'+s.id).value;
+    sc[s.id]=(v!==''&&!isNaN(parseFloat(v)))?parseFloat(v):null;
+  }
+  var calced=[];
+  for(var i=0;i<SUBJECTS.length;i++){
+    var s=SUBJECTS[i];
+    if(s.grp!=='thcs'&&sc[s.id]!==null)calced.push(s);
+  }
+  var sum=0;for(var i=0;i<calced.length;i++)sum+=sc[calced[i].id];
+  var tb=Math.round(sum/calced.length*100)/100;
+  var r=getRank(tb);
+  render(sc,tb,r,calced);
+}
+
+function render(sc,tb,r,calced){
+  var panel=document.getElementById('rp');
+  panel.innerHTML='';
+  var descMap={G:'Xuất sắc! Tiếp tục phát huy và hướng tới thi THPT điểm cao.',K:'Kết quả tốt! Ôn kỹ môn yếu để đẩy lên mức Giỏi.',T:'Đạt chuẩn. Đầu tư thêm vào môn yếu và học đều đặn hơn.',Y:'Đừng nản! Bắt đầu từ kiến thức cơ bản. AI Study Buddy giải thích từng bước cho bạn.'};
+  panel.innerHTML+='<div class="sbanner '+r.sb+'">'
+    +'<div class="sb-ring"><div class="sb-num">'+tb.toFixed(2)+'</div><div class="sb-lbl">Điểm TB</div></div>'
+    +'<div class="sb-info"><div class="sb-rank">Học lực: '+r.t+'</div><div class="sb-desc">'+descMap[r.c]+'</div>'
+    +'<div class="sb-cnt">📚 Tính từ '+calced.length+' môn (bắt buộc + THPT)</div></div></div>';
+
+  // bảng điểm
+  function mkRows(grp){
+    var h='';
+    for(var i=0;i<SUBJECTS.length;i++){
+      var s=SUBJECTS[i];if(s.grp!==grp||sc[s.id]===null)continue;
+      var rk=getRank(sc[s.id]);var col=sColor(sc[s.id]);
+      var tag=grp==='req'?'<span class="lvl lv-req">Bắt buộc</span>':grp==='thpt'?'<span class="lvl lv-thpt">THPT</span>':'<span class="lvl lv-thcs">THCS</span>';
+      h+='<tr><td class="td-n">'+s.name+tag+'</td><td class="td-s" style="color:'+col+'">'+sc[s.id].toFixed(1)+'</td><td class="td-r"><span class="gpill '+rk.pill+'">'+rk.t+'</span></td></tr>';
+    }
+    return h;
+  }
+  panel.innerHTML+='<div class="rcard"><div class="rc-head"><div class="rc-ico ico-b">📊</div><div><div class="rc-title">Bảng điểm chi tiết</div><div class="rc-sub">Tất cả môn đã nhập · phân cấp học</div></div></div>'
+    +'<div class="rc-body"><table class="stbl"><thead><tr><th>Môn học</th><th>Điểm</th><th>Xếp loại</th></tr></thead><tbody>'+mkRows('req')+mkRows('thpt')+mkRows('thcs')+'</tbody></table></div></div>';
+
+  // mạnh / yếu
+  var all=[];
+  for(var i=0;i<SUBJECTS.length;i++){if(sc[SUBJECTS[i].id]!==null)all.push({name:SUBJECTS[i].name,score:sc[SUBJECTS[i].id]})}
+  all.sort(function(a,b){return b.score-a.score});
+  var top3=all.slice(0,3);var bot3=all.slice(-3).reverse();
+  function mkBar(item){return'<div style="margin-bottom:9px"><div class="brow"><span class="bname">'+item.name+'</span><span class="bval" style="color:'+sColor(item.score)+'">'+item.score.toFixed(1)+'</span></div><div class="bbar"><div class="bfill" style="width:'+(item.score*10)+'%;background:'+barGrad(item.score)+'"></div></div></div>'}
+  panel.innerHTML+='<div class="rcard"><div class="rc-head"><div class="rc-ico ico-g">💪</div><div><div class="rc-title">Điểm mạnh &amp; Cần cải thiện</div><div class="rc-sub">Top 3 cao nhất và 3 thấp nhất</div></div></div>'
+    +'<div class="rc-body"><div class="sec-lbl" style="color:var(--green)">⬆ Môn nổi bật nhất</div>'+top3.map(mkBar).join('')
+    +'<div class="div-line"></div><div class="sec-lbl" style="color:var(--red)">⬇ Cần tập trung ôn</div>'+bot3.map(mkBar).join('')+'</div></div>';
+
+  // THCS
+  var thcsDef=[{id:'khtn',ico:'🔬',name:'KHTN'},{id:'lsdia',ico:'🗺️',name:'Lịch sử & ĐL'},{id:'gdcd',ico:'🏛️',name:'GD Công dân'}];
+  var hasT=thcsDef.some(function(t){return sc[t.id]!==null});
+  if(hasT){
+    var cards=thcsDef.map(function(t){
+      if(sc[t.id]===null)return'<div class="fcrd fc-em"><div class="fc-ico">'+t.ico+'</div><div class="fc-name">'+t.name+'</div><div class="fc-score" style="color:var(--g400)">—</div><div class="fc-lvl">Chưa nhập</div></div>';
+      var s=sc[t.id];var cls=s>=7.5?'fc-hi':s>=6?'fc-md':'fc-lo';var lbl=s>=7.5?'✅ Tốt':s>=6?'📈 Khá':'⚠️ Cần bổ sung';
+      return'<div class="fcrd '+cls+'"><div class="fc-ico">'+t.ico+'</div><div class="fc-name">'+t.name+'</div><div class="fc-score" style="color:'+sColor(s)+'">'+s.toFixed(1)+'</div><div class="fc-lvl">'+lbl+'</div></div>';
+    }).join('');
+    panel.innerHTML+='<div class="rcard"><div class="rc-head"><div class="rc-ico ico-a">🏫</div><div><div class="rc-title">Đánh giá nền tảng THCS</div><div class="rc-sub">Chỉ nhận xét nền tảng · Không ảnh hưởng tổ hợp thi</div></div></div>'
+      +'<div class="rc-body"><div class="fc-grid">'+cards+'</div><div class="warn-box"><span style="font-size:1rem;flex-shrink:0">⚠️</span><p>Môn THCS <strong>không được dùng để gợi ý tổ hợp thi THPT</strong> theo quy định GDPT 2018.</p></div></div></div>';
+  }
+
+  // định hướng
+  var tendDef=[
+    {ico:'🔬',name:'Khoa học Tự nhiên',keys:['toan','ly','hoa'],desc:'Tư duy logic & phân tích. Phù hợp kỹ thuật, nghiên cứu.',thr:7},
+    {ico:'📚',name:'Khoa học Xã hội',keys:['van','su','dia'],desc:'Năng lực ngôn ngữ & xã hội. Phù hợp luật, sư phạm.',thr:7},
+    {ico:'🧬',name:'Y – Dược – Sinh học',keys:['sinh','hoa'],desc:'Sinh–Hóa cao. Phù hợp y khoa, dược học, sinh học ứng dụng.',thr:7},
+    {ico:'💻',name:'Công nghệ Thông tin',keys:['tin','toan'],desc:'Tin học nổi bật. Tiềm năng lập trình, AI, kỹ thuật số.',thr:7.5},
+    {ico:'💰',name:'Kinh tế – Luật',keys:['ktpl','van'],desc:'KT&PL nổi bật. Phù hợp kinh tế, luật kinh doanh, tài chính.',thr:7},
+    {ico:'⚙️',name:'Kỹ thuật – Cơ khí',keys:['cn','toan','ly'],desc:'Tư duy kỹ thuật. Phù hợp cơ khí, điện tử, xây dựng.',thr:6.5},
+    {ico:'🌍',name:'Ngôn ngữ – Quốc tế',keys:['anh','van'],desc:'Ngoại ngữ vượt trội. Phù hợp ngoại giao, phiên dịch, du lịch.',thr:7.5}
+  ];
+  var tHtml='';
+  for(var i=0;i<tendDef.length;i++){
+    var g=tendDef[i];var a=gAvg(sc,g.keys);if(a===null)continue;
+    var cls=a>=g.thr+1?'t-s':a>=g.thr?'t-m':'t-w';
+    tHtml+='<div class="titem '+cls+'"><div class="tico">'+g.ico+'</div><div class="tbody"><div class="tname">'+g.name+'</div><div class="tdesc">'+g.desc+'</div></div><div class="tavg">TB: '+a.toFixed(1)+'</div></div>';
+  }
+  if(!tHtml)tHtml='<p style="color:var(--g400);font-size:.84rem">Nhập thêm môn THPT để xem định hướng.</p>';
+  panel.innerHTML+='<div class="rcard"><div class="rc-head"><div class="rc-ico ico-p">🧭</div><div><div class="rc-title">Định hướng THPT</div><div class="rc-sub">Chỉ dựa trên môn THPT · phân tích thiên hướng khối</div></div></div><div class="rc-body"><div class="tlist">'+tHtml+'</div></div></div>';
+
+  // tổ hợp
+  var vc=[];
+  for(var i=0;i<COMBOS.length;i++){
+    var c=COMBOS[i];var vals=[];var full=true;
+    for(var j=0;j<c.subs.length;j++){if(sc[c.subs[j]]===null){full=false;break}vals.push(sc[c.subs[j]])}
+    if(!full)continue;
+    var s2=0;for(var j=0;j<vals.length;j++)s2+=vals[j];
+    vc.push({code:c.code,name:c.name,avg:s2/vals.length});
+  }
+  vc.sort(function(a,b){return b.avg-a.avg});vc=vc.slice(0,8);
+  var cHtml='';
+  if(vc.length){for(var i=0;i<vc.length;i++){var c=vc[i];var rk=getRank(c.avg);cHtml+='<div class="cchip"><div class="cc-code">'+c.code+'</div><div class="cc-name">'+c.name+'</div><span class="gpill '+rk.pill+' cc-avg">'+c.avg.toFixed(1)+' – '+rk.t+'</span></div>';}}
+  else cHtml='<p style="color:var(--g400);font-size:.84rem">Nhập thêm môn THPT để xem gợi ý tổ hợp.</p>';
+  panel.innerHTML+='<div class="rcard"><div class="rc-head"><div class="rc-ico ico-t">🎯</div><div><div class="rc-title">Gợi ý tổ hợp thi THPT</div><div class="rc-sub">Chỉ tính từ môn THPT · Sắp xếp theo điểm TB cao nhất</div></div></div><div class="rc-body"><div class="cw">'+cHtml+'</div></div></div>';
+
+  // ngành nghề
+  var ng=[];
+  var tlh=gAvg(sc,['toan','ly','hoa']);var vsd=gAvg(sc,['van','su','dia']);var shoa=gAvg(sc,['sinh','hoa']);
+  if(tlh!==null&&tlh>=7)ng.push('🔭 Kỹ sư','⚡ Điện – Điện tử','🏗️ Xây dựng','⚗️ Hóa học');
+  if(vsd!==null&&vsd>=7)ng.push('📰 Báo chí','🎓 Sư phạm','🌏 Địa lý','🏛️ Quản lý nhà nước');
+  if(shoa!==null&&shoa>=7)ng.push('🏥 Y khoa','💊 Dược học','🧬 Sinh học ứng dụng');
+  if(sc['tin']!==null&&sc['tin']>=7.5)ng.push('💻 Lập trình viên','🤖 AI / ML','📊 Data Science');
+  if(sc['ktpl']!==null&&sc['ktpl']>=7)ng.push('⚖️ Luật học','💼 Kinh tế','🏦 Tài chính – Ngân hàng');
+  if(sc['cn']!==null&&sc['cn']>=7)ng.push('⚙️ Cơ khí','🔌 Điện tử','🤖 Tự động hóa');
+  if(sc['anh']!==null&&sc['anh']>=7.5)ng.push('🌐 Ngôn ngữ Anh','✈️ Du lịch','📖 Phiên dịch','🤝 Quan hệ QT');
+  if(sc['toan']!==null&&sc['toan']>=8)ng.push('📈 Tài chính','🧮 Toán ứng dụng','🔍 Thống kê');
+  var uniq=[];for(var i=0;i<ng.length;i++){if(uniq.indexOf(ng[i])<0)uniq.push(ng[i])}uniq=uniq.slice(0,16);
+  var nHtml=uniq.length?uniq.map(function(n){return'<div class="ntag">'+n+'</div>'}).join(''):'<p style="color:var(--g400);font-size:.84rem">Nhập thêm điểm để xem gợi ý ngành nghề.</p>';
+  panel.innerHTML+='<div class="rcard"><div class="rc-head"><div class="rc-ico ico-y">🚀</div><div><div class="rc-title">Gợi ý ngành nghề</div><div class="rc-sub">Phù hợp với năng lực và thiên hướng của bạn</div></div></div><div class="rc-body"><div class="nw">'+nHtml+'</div></div></div>';
+
+  // lời khuyên
+  var advs=[];
+  var dG={G:'Kết quả xuất sắc! Đặt mục tiêu điểm THPT cao và cân nhắc thi học sinh giỏi cấp tỉnh/quốc gia.',K:'Kết quả khá tốt. Tập trung ôn môn dưới 7.0 để đẩy TB lên Giỏi.',T:'Bạn đang ở mức trung bình. Lập lịch học đều đặn và ưu tiên ôn kiến thức nền các môn yếu.',Y:'Đừng bỏ cuộc! Bắt đầu từ kiến thức cơ bản. AI Study Buddy giải thích từng bước cho bạn.'};
+  advs.push(dG[r.c]);
+  var cl2=[];for(var i=0;i<SUBJECTS.length;i++){var s=SUBJECTS[i];if(s.grp!=='thcs'&&sc[s.id]!==null)cl2.push({name:s.name,score:sc[s.id]})}
+  if(cl2.length){cl2.sort(function(a,b){return a.score-b.score});var w=cl2[0];if(w.score<6.5)advs.push('<strong>'+w.name+' ('+w.score.toFixed(1)+')</strong> là môn cần ưu tiên ôn ngay. Dùng AI Study Buddy tạo lộ trình riêng cho môn này.')}
+  if(tlh!==null&&tlh>=8)advs.push('Nhóm <strong>Toán–Lý–Hóa</strong> rất nổi bật. Luyện thử đề theo tổ hợp A00/A01 để định hướng mục tiêu.');
+  if(vsd!==null&&vsd>=8)advs.push('Nhóm <strong>Văn–Sử–Địa</strong> tốt. Luyện viết nghị luận xã hội mỗi tuần để tăng điểm Văn đáng kể.');
+  if(sc['anh']!==null&&sc['anh']>=8)advs.push('<strong>Tiếng Anh</strong> vượt trội – cân nhắc luyện IELTS/TOEIC để mở rộng cơ hội học bổng quốc tế.');
+  if(sc['tin']!==null&&sc['tin']>=7.5)advs.push('<strong>Tin học</strong> tốt! Thử học Python để có lợi thế khi vào đại học CNTT.');
+  if(sc['ktpl']!==null&&sc['ktpl']>=7.5)advs.push('<strong>Kinh tế &amp; Pháp luật</strong> nổi bật – hướng tới tổ hợp KT1/KT2 và các ngành Luật, Tài chính.');
+  if(sc['khtn']!==null&&sc['khtn']>=7.5)advs.push('<strong>KHTN (THCS)</strong> tốt – nền tảng khoa học vững. Học Lý, Hóa, Sinh THPT sẽ thuận lợi hơn.');
+  advs.push('Dùng <strong>Knowledge Gap Map</strong> trên AI Study Buddy để theo dõi lỗ hổng kiến thức và điều chỉnh kế hoạch học mỗi tuần.');
+  advs=advs.slice(0,7);
+  var aHtml=advs.map(function(t,i){return'<div class="aitem"><div class="anum">'+(i+1)+'</div><div class="atxt">'+t+'</div></div>'}).join('');
+  panel.innerHTML+='<div class="rcard"><div class="rc-head"><div class="rc-ico ico-b">💡</div><div><div class="rc-title">Lời khuyên học tập cá nhân hóa</div><div class="rc-sub">AI Study Buddy phân tích &amp; gợi ý riêng cho bạn</div></div></div><div class="rc-body"><div class="alist">'+aHtml+'</div></div></div>';
+
+  document.getElementById('rp').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function resetAll(){
+  for(var i=0;i<SUBJECTS.length;i++){
+    var s=SUBJECTS[i];
+    var el=document.getElementById('s-'+s.id);
+    var wrap=document.getElementById('w-'+s.id);
+    var dot=document.getElementById('gd-'+s.id);
+    el.value='';wrap.classList.remove('has-v','serr');dot.className='sgd';dot.textContent='';
+  }
+  document.getElementById('rp').innerHTML='<div class="empty-st"><div class="empty-ico">🎯</div><h4>Kết quả phân tích hiển thị ở đây</h4><p>Nhập điểm các môn bên trái rồi nhấn<br><strong>Tính kết quả &amp; Phân tích</strong></p></div>';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
